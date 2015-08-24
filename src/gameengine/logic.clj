@@ -1,1 +1,1 @@
-(ns rithmomachy.logic)
+(ns gameengine.logic)
