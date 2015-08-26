@@ -4,11 +4,6 @@
 (defrecord GameRules [movement extra-rules])
 (defrecord Game [game-name game-board dimensions rules])
 
-;; Example piece
-(def a-piece (GamePiece. :black :man nil))
-(def b-piece (GamePiece. :white :man nil))
-(def c-piece (GamePiece. :black :king nil))
-
 ;; Example Rules
 (def checkers-rules (GameRules. {:king '([-1 -1] [-1 1] [1 -1] [1 1]),
                                  :man {:white '([-1 1] [1 1]),
@@ -16,8 +11,11 @@
                                 nil))
 
 ;; Standard pieces
-(def black-piece (GamePiece. :black :man nil))
-(def white-piece (GamePiece. :white :man nil))
+(def black-piece (GamePiece. :black :man :checkers nil))
+(def white-piece (GamePiece. :white :man :checkers nil))
+
+;; Sketch of a map function for querying the board
+(map #(gameengine.games/checkers-board %) (gameengine.games/board-coordinates 8 8)) 
 
 ;; Board map [y x] coordinate, origin [0,0] @ top-left
 (def checkers-board {[0 1] black-piece,

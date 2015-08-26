@@ -29,6 +29,12 @@
   (ansi/red (buffer-piece (str (.toUpperCase (.substring (str (:shape m)) 1 2))
                                (str (:value m))))))
 
+;; To be used in querying the coordinate map.
+;; (map #(gameengine.games/checkers-board %) (gameengine.games/board-coordinates 8 8)) 
+
+(defmacro colorize-piece [m s]
+  `(#spy/p ~@(symbol (str 'ansi\/ (name (:color m)))) #spy/p ~s))
+
 ;; (defn display-board
 ;;   "Displays the current game board. This function is only used for it's side effects.
 ;;   Input -> Game board <map>
