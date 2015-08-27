@@ -1,8 +1,8 @@
 (ns gameengine.games)
 
+(defrecord Game [game-name game-board dimensions rules])
 (defrecord GamePiece [color shape game value])
 (defrecord GameRules [movement extra-rules])
-(defrecord Game [game-name game-board dimensions rules])
 
 ;; Example Rules
 (def checkers-rules (GameRules. {:king '([-1 -1] [-1 1] [1 -1] [1 1]),
@@ -15,7 +15,7 @@
 (def white-piece (GamePiece. :white :man :checkers nil))
 
 ;; Sketch of a map function for querying the board
-(map #(gameengine.games/checkers-board %) (gameengine.games/board-coordinates 8 8)) 
+;; (map #(gameengine.games/checkers-board %) (gameengine.games/board-coordinates 8 8)) 
 
 ;; Board map [y x] coordinate, origin [0,0] @ top-left
 (def checkers-board {[0 1] black-piece,
@@ -47,6 +47,8 @@
   (for [x (range x-dimension),
         y (range y-dimension)]
     [x y]))
+
+(def memo-coords (memoize board-coordinates))
 
 ;;Types of pieces: Men or Kings. Men can move diagonally, as many times as they can capture.
 (def checkers (Game.
