@@ -14,9 +14,9 @@
   board it is to be placed on.
   Input -> pos <vec>
   Output -> boolean"
-  [pos]
-  (let [y-range (:y (:dimensions board/game-board))
-        x-range (:x (:dimensions board/game-board))
+  [pos board]
+  (let [y-range (:y (:dimensions board))
+        x-range (:x (:dimensions board))
         y (nth pos 0)
         x (nth pos 1)]
     (and (and (>= x 1) (<= x x-range))
@@ -27,10 +27,10 @@
   return the list of valid moves the piece at position could make.
   Input -> position <vec>, movement <seq of vecs>
   Output -> valid-moves <seq of vecs>"
-  [position movement]
-  (filter in-range? (generate-moves position movement)))
+  [position movement board]
+  (filter (fn [pos] (in-range? pos board)) (generate-moves position movement)))
 
-(defn valid-move? [board from to]
+(defn valid-move? [from to board]
   (let [movement ((:shape (board from)) (:movement board))
         move-pool (valid-moves from movement)]
     (if (nil? (some #{to} move-pool))
