@@ -1,10 +1,7 @@
-(ns gameengine.checkers)
+(ns gameengine.checkers
+  (:import [gameengine.games Game GamePiece GameRules]))
 
-(defrecord Game [game-name game-board dimensions rules])
-(defrecord GamePiece [color shape game value])
-(defrecord GameRules [movement extra-rules])
-
-;; Standard pieces
+;; Checkers pieces
 (def black-piece (GamePiece. :black :man :checkers nil))
 (def white-piece (GamePiece. :white :man :checkers nil))
 (def black-king (GamePiece. :black :king :checkers nil))
@@ -21,39 +18,33 @@
                                        :black '([-1 -1] [-1 1])}}
                                 nil))
 
-(def checkers-board {[0 1] black-piece,
-                     [0 3] black-piece,
-                     [0 5] black-piece,
-                     [0 7] black-piece,
-                     [1 0] black-piece,
-                     [1 2] black-piece,
-                     [1 4] black-piece,
-                     [1 6] black-piece,
-                     [2 1] black-piece,
-                     [2 3] black-piece,
-                     [2 5] black-piece,
-                     [2 7] black-piece,
-                     [5 0] white-piece,
-                     [5 2] white-piece,
-                     [5 4] white-piece,
-                     [5 6] white-piece,
-                     [6 1] white-piece,
-                     [6 3] white-piece,
-                     [6 5] white-piece,
-                     [6 7] white-piece,
-                     [7 0] white-piece,
-                     [7 2] white-piece,
-                     [7 4] white-piece,
-                     [7 6] white-piece})
+;; Map of a populated, initial state checkers board.
+(def checkers-board (into (sorted-map) {[0 1] black-piece,
+                                        [0 3] black-piece,
+                                        [0 5] black-piece,
+                                        [0 7] black-piece,
+                                        [1 0] black-piece,
+                                        [1 2] black-piece,
+                                        [1 4] black-piece,
+                                        [1 6] black-piece,
+                                        [2 1] black-piece,
+                                        [2 3] black-piece,
+                                        [2 5] black-piece,
+                                        [2 7] black-piece,
+                                        [5 0] white-piece,
+                                        [5 2] white-piece,
+                                        [5 4] white-piece,
+                                        [5 6] white-piece,
+                                        [6 1] white-piece,
+                                        [6 3] white-piece,
+                                        [6 5] white-piece,
+                                        [6 7] white-piece,
+                                        [7 0] white-piece,
+                                        [7 2] white-piece,
+                                        [7 4] white-piece,
+                                        [7 6] white-piece}))
 
-
-(defn board-coordinates [x-dimension y-dimension]
-  (for [x (range x-dimension),
-        y (range y-dimension)]
-    [x y]))
-
-(def memo-coords (memoize board-coordinates))
-
+;; An initial state checkers game object.
 (def checkers (Game.
                :checkers
                checkers-board
