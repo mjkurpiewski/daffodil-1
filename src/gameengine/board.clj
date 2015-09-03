@@ -1,8 +1,9 @@
 (ns gameengine.board
-  (:require [io.aviso.ansi :as ansi])
-  (:import [gameengine.games GamePiece]))
+  (:require [io.aviso.ansi :as ansi]
+            [gameengine.games :as games])
+  (:import gameengine.games.GamePiece))
 
-(def the-buffer "     ")
+(def the-buffer "       ")
 (def the-empty-space (GamePiece. :nil :nil :nil "."))
 
 (defn buffer-piece
@@ -11,9 +12,9 @@
   is added to the right side of the piece.
   Input -> A piece representation <string>
   Output -> A buffered piece representation <string>"
-  [piece-string]
+  [piece-string target]
   (loop [result piece-string]
-    (if (= (.length result) 5)
+    (if (= (.length result) target)
       result
       (recur (str result " ")))))
 
@@ -22,7 +23,10 @@
   Dispatches based on the game & color of the object passed to format-piece.
   Input: A playing piece <record of type GamePiece>
   Output: string"
-  (juxt :game :color))
+  (fn [m]
+    (if m
+      ((juxt :game-name :color) m)
+      [:empty])))
 
 ;; !! IMPORTANT NOTES!!!
 
@@ -37,16 +41,16 @@
 ;; For checkers
 (defmethod format-piece [:checkers :black] [m]
   (if (= (:shape m) :man)
-    (buffer-piece (str \u26C2))
-    (buffer-piece (str \u26C3))))
+    (buffer-piece (str \u26C2) 5)
+    (buffer-piece (str \u26C3) 5)))
 
 (defmethod format-piece [:checkers :white] [m]
   (if (= (:shape m) :man)
-    (buffer-piece (str \u26C0))
-    (buffer-piece (str \u26C1))))
+    (buffer-piece (str \u26C0) 5)
+    (buffer-piece (str \u26C1) 5)))
 
-(defmethod format-piece [:nil :nil] [m]
-  (buffer-piece (:value m)))
+(defmethod format-piece [:empty] [m]
+  (buffer-piece (str (:value the-empty-space)) 5))
 
 ;; For rithmomachy
 (defmethod format-piece [:rithmomachy :blue] [m]
@@ -59,9 +63,15 @@
 (defn index-row
   "Creates an index row with indices running from 1 to x-dimension, inclusive.
   The index row is preceded with a buffered empty space so as to preserve proper
-  indexing."
-  [i]
-  (conj (map buffer-piece (map str (range 1 (inc i)))) the-buffer))
+  indexing. Can take an optional offset argument of type integer to improve display.
+  Input <- i, an integer for the length of index row & an optional offset argument.
+  Output -> A string representing a row that indexes the x positions on a board."
+  [i & offset]
+  (let [indexstring (map str (range 1 (inc i)))]
+    (conj (map (fn [n]
+                 (buffer-piece n (first offset)))
+               indexstring)
+          the-buffer)))
 
 (defn format-row
   "When given an empty sequence, will print an indexing row with a leading blank space.
@@ -70,8 +80,14 @@
   nil and return a string prefixed with an index and a line drawing character.
   Input <- A sequence of eight objects, or a special nil sequence.
   Output -> A properly formatted string, with properly formatted objects, terminated with \n"
-  [s]
-  )
+  [row]
+  (map format-piece row))
+
+(defn query-board [game]
+  (let [gameboard (:game-board game)
+        x (-> game :dimensions :x)
+        y (-> game :dimensions :y)]
+    (map gameboard (games/board-coordinates x y))))
 
 (defn display-board
   "Given a game object, will display an approprate terminal representation of the board 
@@ -81,28 +97,8 @@
   Input <- An object of record type Game
   Output -> (side-effect) Display current board."
   [game]
-  (doseq [rows-to-iterate (range 0 (inc (-> game :dimensions :y))),
-          :let [rowmap (fn [board] (partition 8 (:game-board game)))]]
-    (println (rowmap))))
-
-;; To be used in querying the coordinate map.
-;; (map #(gameengine.games/checkers-board %) (gameengine.games/board-coordinates 8 8)) 
-
-;; (defmacro colorize-piece [m s]
-;;   `(#spy/p ~@(symbol (str 'ansi\/ (name (:color m)))) #spy/p ~s))
-
-;; (defn display-board
-;;   "Displays the current game board. This function is only used for it's side effects.
-;;   Input -> Game board <map>
-;;   Output -> nil"
-;;   [sm]
-;;   (let [x (:x (:dimensions sm))
-;;         y (:y (:dimensions sm))]
-;;     (doseq [iy (range y 0 -1)
-;;             ix (range 0 (inc x))
-;;             :let [v [iy ix]]]
-;;       (cond (and (sm v) (= ix x)) (println (format-piece (sm v)))
-;;             (sm v) (print (format-piece (sm v)))
-;;             (= ix x) (println ".")
-;;             :else (print the-empty-space)))))
-
+  (doseq [rowmap (partition (-> game
+                                :dimensions
+                                :y)
+                            (query-board game))]
+    (println (format-row rowmap))))

@@ -1,5 +1,8 @@
 (ns gameengine.checkers
-  (:import [gameengine.games Game GamePiece GameRules]))
+  (:import [gameengine.games
+            Game
+            GamePiece
+            GameRules]))
 
 ;; Checkers pieces
 (def black-piece (GamePiece. :black :man :checkers nil))
@@ -14,8 +17,8 @@
   conditions as it stands. To be implemented later. These are currently \"extra-rules\"
   but may be redefined in the future. This example rule-set has a value of nil for extra-rules"
   (GameRules. {:king '([-1 -1] [-1 1] [1 -1] [1 1]),
-                                 :man {:white '([-1 1] [1 1]),
-                                       :black '([-1 -1] [-1 1])}}
+                                 :man {:white '([-1 -1] [-1 1]),
+                                       :black '([1 -1] [1 1])}}
                                 nil))
 
 ;; Map of a populated, initial state checkers board.
