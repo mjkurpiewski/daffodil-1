@@ -1,36 +1,12 @@
-# gameengine
-
-FIXME: description
-
-## Installation
-
-Download from http://example.com/FIXME.
+# daffodil-1, a somewhat generic board game engine in Clojure
 
 ## Usage
 
-FIXME: explanation
-
-    $ java -jar gameengine-0.1.0-standalone.jar [args]
-
-## Options
-
-FIXME: listing of options this app accepts.
-
-## Examples
-
-...
+Current usage is look at the code, maybe clone the repository and play with it
+in your own Clojure repl. Very much a work in progress.
 
 ### Bugs
 
-...
+"Here there be dragons."
 
-### Any Other Sections
-### That You Think
-### Might be Useful
 
-## License
-
-Copyright © 2015 FIXME
-
-Distributed under the Eclipse Public License either version 1.0 or (at
-your option) any later version.
