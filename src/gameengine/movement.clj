@@ -75,6 +75,5 @@
     (if (and (nil? destination)
              (valid-move? game from to))
       (let [interim-board (dissoc board from)]
-        ;;        (Game. (:game-name game) (assoc board to piece) (:dimensions game) (:rules game)))
         (assoc game :game-board (assoc interim-board to piece)))
       false)))
